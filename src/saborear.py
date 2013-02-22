@@ -75,6 +75,11 @@ def get_rating(rating_id):
         abort(404, 'No document with id %s' % rating_id)
     return json.dumps(entity)
 
+@route('/ratings/<rating_id>', method='DELETE')
+def delete_rating(rating_id):
+	logger.error("Operation not implemented")
+	response.status = 200
+
 
 #normalize nongodb _id
 def _normalize_object(obj):
