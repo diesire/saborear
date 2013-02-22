@@ -19,6 +19,16 @@ connection = Connection('localhost', 27017)
 db = connection.mydatabase
 collection = db[_testing_collection]
 
+#Root
+@route('/', method='GET')
+def index():
+    "Devuelve una lista con las operaciones válidas"
+    response.set_header('Content-Type', 'application/json')
+    operations = [{'route_id':'ratings', 'uri':'/ratings', 'operations':['GET', 'POST']},
+                 {'route_id':'users', 'uri':'/users', 'operations':['GET']},
+                 {'route_id':'targets', 'uri':'/targets', 'operations':['GET']}]
+    json_operations = json.dumps(operations)
+    return json_operations
 
 # Ratings
 @route('/ratings', method='GET')
