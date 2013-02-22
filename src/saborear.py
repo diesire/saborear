@@ -85,6 +85,34 @@ def modify_rating(rating_id):
 	logger.error("Operation not implemented")
 	response.status = 200
 
+@route('/users', method='GET')
+def get_users():
+    ratings = collection.find()
+    json_docs = []
+    for doc in ratings:
+        _normalize_object(doc)
+        user = {'user_id': doc['user_id'], 'uri': '/users/{}'.format(doc['user_id'])}
+        if user not in json_docs:
+            json_docs.append(user)
+    json_docs = json.dumps(json_docs)
+    logger.info('json_docs: %s', json_docs)
+    response.set_header('Content-Type', 'application/json')
+    return json_docs
+
+@route('/users/<user_id>', method='GET')
+def get_user(user_id):
+    ratings = collection.find({'user_id': user_id})
+    if not ratings:
+        abort(404, 'No document with id %s' % user_id)
+    json_docs = []
+    for doc in ratings:
+        _normalize_object(doc)
+        json_docs.append({'id': doc['id'], 'uri': '/ratings/{}'.format(doc['id'])})
+    json_docs = json.dumps({ 'user_id': user_id, 'ratings':json_docs})
+    logger.info('json_docs: %s', json_docs)
+    response.set_header('Content-Type', 'application/json')
+    return json_docs
+
 
 #normalize nongodb _id
 def _normalize_object(obj):
