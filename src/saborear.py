@@ -80,6 +80,11 @@ def delete_rating(rating_id):
 	logger.error("Operation not implemented")
 	response.status = 200
 
+@route('/ratings/<rating_id>', method='PUT')
+def modify_rating(rating_id):
+	logger.error("Operation not implemented")
+	response.status = 200
+
 
 #normalize nongodb _id
 def _normalize_object(obj):
