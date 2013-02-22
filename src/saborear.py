@@ -113,6 +113,33 @@ def get_user(user_id):
     response.set_header('Content-Type', 'application/json')
     return json_docs
 
+@route('/targets', method='GET')
+def get_targets():
+    ratings = collection.find()
+    json_docs = []
+    for doc in ratings:
+        _normalize_object(doc)
+        target = {'target_id': doc['target_id'], 'uri': '/targets/{}'.format(doc['target_id'])}
+        if target not in json_docs:
+            json_docs.append(target)
+    json_docs = json.dumps(json_docs)
+    logger.info('json_docs: %s', json_docs)
+    response.set_header('Content-Type', 'application/json')
+    return json_docs
+
+@route('/targets/<target_id>', method='GET')
+def get_target(target_id):
+    ratings = collection.find({'target_id': target_id})
+    if not ratings:
+        abort(404, 'No document with id %s' % target_id)
+    json_docs = []
+    for doc in ratings:
+        _normalize_object(doc)
+        json_docs.append({'id': doc['id'], 'uri': '/ratings/{}'.format(doc['id'])})
+    json_docs = json.dumps({ 'target_id': target_id, 'ratings':json_docs})
+    logger.info('json_docs: %s', json_docs)
+    response.set_header('Content-Type', 'application/json')
+    return json_docs
 
 #normalize nongodb _id
 def _normalize_object(obj):
