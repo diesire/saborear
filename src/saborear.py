@@ -78,8 +78,12 @@ def get_rating(rating_id):
 
 @route('/ratings/<rating_id>', method='DELETE')
 def delete_rating(rating_id):
-	logger.error("Operation not implemented")
-	response.status = 200
+    try:
+        doc_id = collection.remove({'_id': ObjectId(rating_id)})
+        response.status = 202
+        logger.debug('Rating {} deleted'.format(str(doc_id)))
+    except ValidationError as ve:
+        abort(400, str(ve))
 
 @route('/ratings/<rating_id>', method='PUT')
 def modify_rating(rating_id):
