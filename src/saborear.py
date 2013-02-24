@@ -87,8 +87,20 @@ def delete_rating(rating_id):
 
 @route('/ratings/<rating_id>', method='PUT')
 def modify_rating(rating_id):
-	logger.error("Operation not implemented")
-	response.status = 200
+    #{"user_id":"test", "target_id":"la cullar", "value":"2", "comment":"Malo, malo"}
+    data = request.body.readline()
+    logger.debug('data %s', data)
+    if not data:
+        logger.warning('Status 400 - No data received')
+        abort(400, 'No data received')
+    entity = json.loads(data)
+    logger.debug('entity %s', entity)
+    try:
+        doc_id = collection.update({'_id': ObjectId(rating_id)}, entity)
+        response.status = 202
+        logger.debug('Rating {} modified'.format(str(doc_id)))
+    except ValidationError as ve:
+        abort(400, str(ve))
 
 @route('/users', method='GET')
 def get_users():
