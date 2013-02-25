@@ -7,6 +7,7 @@ from bottle import *
 from pymongo import Connection
 from bson.objectid import ObjectId
 from bson import json_util
+from io import TextIOWrapper, BytesIO
 
 #Logger config
 logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
@@ -49,12 +50,14 @@ def get_ratings():
 @route('/ratings', method='POST')
 def post_ratings():
     #{"user_id":"test", "target_id":"la cullar", "value":"2", "comment":"Malo, malo"}
-    data = request.body.readline()
-    logger.debug('data %s', data)
+    data = request.body
+    if isinstance(data, BytesIO):
+        data = TextIOWrapper(data)  
+    logger.debug('data: %s', data)
     if not data:
         logger.warning('Status 400 - No data received')
         abort(400, 'No data received')
-    entity = json.loads(data)
+    entity = json.load(data)
     logger.debug('entity %s', entity)
     try:
         doc_id = collection.save(entity)
@@ -88,12 +91,14 @@ def delete_rating(rating_id):
 @route('/ratings/<rating_id>', method='PUT')
 def modify_rating(rating_id):
     #{"user_id":"test", "target_id":"la cullar", "value":"2", "comment":"Malo, malo"}
-    data = request.body.readline()
+    data = request.body
+    if isinstance(data, BytesIO):
+        data = TextIOWrapper(data) 
     logger.debug('data %s', data)
     if not data:
         logger.warning('Status 400 - No data received')
         abort(400, 'No data received')
-    entity = json.loads(data)
+    entity = json.load(data)
     logger.debug('entity %s', entity)
     try:
         doc_id = collection.update({'_id': ObjectId(rating_id)}, entity)
