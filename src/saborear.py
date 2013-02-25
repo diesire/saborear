@@ -81,7 +81,7 @@ def delete_rating(rating_id):
     try:
         doc_id = collection.remove({'_id': ObjectId(rating_id)})
         response.status = 202
-        logger.debug('Rating {} deleted'.format(str(doc_id)))
+        logger.debug('Rating {} deleted'.format(str(rating_id)))
     except ValidationError as ve:
         abort(400, str(ve))
 
@@ -98,7 +98,7 @@ def modify_rating(rating_id):
     try:
         doc_id = collection.update({'_id': ObjectId(rating_id)}, entity)
         response.status = 202
-        logger.debug('Rating {} modified'.format(str(doc_id)))
+        logger.debug('Rating {} modified'.format(str(rating_id)))
     except ValidationError as ve:
         abort(400, str(ve))
 
